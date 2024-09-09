@@ -9,8 +9,8 @@ dotenv_path = '../.env'  # Update this path to the location of your .env file
 load_dotenv(dotenv_path=dotenv_path)
 
 # Fetch credentials from environment variables
-ADMIN_USERNAME = os.getenv('ADMIN_USERNAME')
-ADMIN_PASSWORD = os.getenv('ADMIN_PASSWORD')
+ADMIN_USERNAME = "Satyam"
+ADMIN_PASSWORD = "12345"
 client = MongoClient('mongodb+srv://bingemovies:CWuhFDboOssypOfD@binge.qvrdf.mongodb.net/')
 
 # Set the page configuration

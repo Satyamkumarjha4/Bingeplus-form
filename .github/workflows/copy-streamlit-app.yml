@@ -1,0 +1,61 @@
+name: Streamlit App Deploy
+on:
+  push:
+    branches:
+      - streamlit_add_movies
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 4  # Ensure the job doesn't run indefinitely
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Create Dir streamlit
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.GCP_VM_HOST }}
+          username: ${{ secrets.GCP_VM_USERNAME }}
+          key: ${{ secrets.GCP_VM_PRIVATE_KEY }}
+          script: |
+            sudo mkdir -p /home/binge+/streamlit
+            sudo chown -R binge+:binge+ /home/binge+/streamlit
+
+      - name: Copy files to GCP VM
+        uses: appleboy/scp-action@master 
+        with:
+          host: ${{ secrets.GCP_VM_HOST }}
+          username: ${{ secrets.GCP_VM_USERNAME }}
+          key: ${{ secrets.GCP_VM_PRIVATE_KEY }}
+          source: "./MongoDB-UI"  
+          target: "/home/binge+/streamlit"  # Target directory on GCP VM
+
+      - name: Set up Python environment and install dependencies
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.GCP_VM_HOST }}
+          username: ${{ secrets.GCP_VM_USERNAME }}
+          key: ${{ secrets.GCP_VM_PRIVATE_KEY }}
+          script: |
+            cd /home/binge+/streamlit
+            python3 -m venv venv  # Create a virtual environment
+            source venv/bin/activate  # Activate the virtual environment
+            pip install --upgrade pip  # Upgrade pip to the latest version
+            pip install -r requirements.txt  # Install the required Python packages
+
+      - name: Run Streamlit and show URL
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.GCP_VM_HOST }}
+          username: ${{ secrets.GCP_VM_USERNAME }}
+          key: ${{ secrets.GCP_VM_PRIVATE_KEY }}
+          script: |
+            cd /home/binge+/streamlit
+            source venv/bin/activate  # Activate the virtual environment
+            chmod +x start_streamlit.sh 
+            ./start_streamlit.sh  # Start the Streamlit application
+        env:
+          ADMIN_USERNAME: ${{ secrets.ADMIN_USERNAME }}
+          ADMIN_PASSWORD: ${{ secrets.ADMIN_PASSWORD }}

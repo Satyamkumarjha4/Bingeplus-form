@@ -5,7 +5,7 @@ import os
 from dotenv import load_dotenv
 
 # Load environment variables from .env file located outside the project directory
-dotenv_path = 'C:/Users/satya/OneDrive/Desktop/Project/ankush/MOVIE-SERIES-MERGE/Merge/Bingeplus-form/.env'  # Update this path to the location of your .env file
+dotenv_path = '../.env'  # Update this path to the location of your .env file
 load_dotenv(dotenv_path=dotenv_path)
 
 # Fetch credentials from environment variables
